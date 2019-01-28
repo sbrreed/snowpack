@@ -1,0 +1,1 @@
+This is an ongoing project. I've pulled snowpack data from 21 ski mountains around the west. I'm currently in the process of creating visualizations of this data which will then be used in a blog post on my website. The visualizations here are works in progress.

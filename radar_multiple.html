@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Smoothed D3.js Radar Chart</title>
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
+    <!-- D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js" charset="utf-8"></script>
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 300;
+            fill: #242424;
+            text-align: center;
+            text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+            cursor: default;
+        }
+
+        .legend {
+            font-family: 'Raleway', sans-serif;
+            fill: #333333;
+        }
+
+        .tooltip {
+            fill: #333333;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="row">
+        <div class="radarChart" id="whistler"></div>
+        <div class="radarChart" id="revelstoke"></div>
+        <div class="radarChart" id="berthoud"></div>
+    </div>
+    <div class="row">
+        <div class="radarChart" id="steamboat"></div>
+
+    </div>
+
+    <script src="radarChart.js"></script>
+    <script>
+        /* Radar chart design created by Nadieh Bremer - VisualCinnamon.com */
+
+        ////////////////////////////////////////////////////////////// 
+        //////////////////////// Set-Up ////////////////////////////// 
+        ////////////////////////////////////////////////////////////// 
+
+        var margin = {
+                top: 100,
+                right: 100,
+                bottom: 100,
+                left: 100
+            },
+            width = Math.min(500, window.innerWidth - 10) - margin.left - margin.right,
+            height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
+
+        ////////////////////////////////////////////////////////////// 
+        ////////////////////////// Data ////////////////////////////// 
+        ////////////////////////////////////////////////////////////// 
+        //  const data = await d3.json("whistlerMonthly.json");
+        //  console.log(data);
+
+        // // d3.json("whistlerMonthly.json", function(error, data) {
+        // //   if (error) throw error;
+        // // console.log(data);
+        // // })
+
+
+        const Whistler = [
+            [{
+                "axis": "January",
+                "value": 18.1102
+            }, {
+                "axis": "February",
+                "value": 20.7874
+            }, {
+                "axis": "March",
+                "value": 28.189
+            }, {
+                "axis": "April",
+                "value": 30.7087
+            }, {
+                "axis": "May",
+                "value": 31.8898
+            }, {
+                "axis": "November",
+                "value": 12.9921
+            }, {
+                "axis": "December",
+                "value": 24.5276
+            }],
+            [{
+                "axis": "January",
+                "value": 34.685
+            }, {
+                "axis": "February",
+                "value": 41.7717
+            }, {
+                "axis": "March",
+                "value": 47.0866
+            }, {
+                "axis": "April",
+                "value": 52.2835
+            }, {
+                "axis": "May",
+                "value": 48.8583
+            }, {
+                "axis": "November",
+                "value": 4.7244
+            }, {
+                "axis": "December",
+                "value": 15.3543
+            }],
+            [{
+                "axis": "January",
+                "value": 24.5276
+            }, {
+                "axis": "February",
+                "value": 26.7323
+            }, {
+                "axis": "March",
+                "value": 42.5197
+            }, {
+                "axis": "April",
+                "value": 49.3307
+            }, {
+                "axis": "May",
+                "value": 46.811
+            }, {
+                "axis": "November",
+                "value": 6.9291
+            }, {
+                "axis": "December",
+                "value": 16.1024
+            }],
+            [{
+                "axis": "January",
+                "value": 23.9694
+            }, {
+                "axis": "February",
+                "value": 27.7988
+            }, {
+                "axis": "March",
+                "value": 33.3858
+            }, {
+                "axis": "April",
+                "value": 33.6614
+            }, {
+                "axis": "May",
+                "value": 25.7087
+            }, {
+                "axis": "November",
+                "value": 8.7008
+            }, {
+                "axis": "December",
+                "value": 14.1732
+            }],
+            [{
+                "axis": "January",
+                "value": 20.9843
+            }, {
+                "axis": "February",
+                "value": 24.0551
+            }, {
+                "axis": "March",
+                "value": 28.937
+            }, {
+                "axis": "April",
+                "value": 34.0945
+            }, {
+                "axis": "May",
+                "value": 29.3378
+            }, {
+                "axis": "November",
+                "value": 8.2677
+            }, {
+                "axis": "December",
+                "value": 14.2281
+            }],
+            [{
+                "axis": "January",
+                "value": 29.0945
+            }, {
+                "axis": "February",
+                "value": 35
+            }, {
+                "axis": "March",
+                "value": 40.5906
+            }, {
+                "axis": "April",
+                "value": 46.063
+            }, {
+                "axis": "May",
+                "value": 44.0157
+            }, {
+                "axis": "November",
+                "value": 17.4409
+            }, {
+                "axis": "December",
+                "value": 30.6317
+            }],
+            [{
+                "axis": "January",
+                "value": 43.2677
+            }, {
+                "axis": "February",
+                "value": 48.2677
+            }, {
+                "axis": "March",
+                "value": 62.4409
+            }, {
+                "axis": "April",
+                "value": 66.5748
+            }, {
+                "axis": "May",
+                "value": 68.3465
+            }, {
+                "axis": "November",
+                "value": 11.811
+            }, {
+                "axis": "December",
+                "value": 21.2598
+            }],
+            [{
+                "axis": "January",
+                "value": 29.5276
+            }, {
+                "axis": "February",
+                "value": 34.728
+            }, {
+                "axis": "March",
+                "value": 39.9678
+            }, {
+                "axis": "April",
+                "value": 41.9291
+            }, {
+                "axis": "May",
+                "value": 42.0866
+            }, {
+                "axis": "November",
+                "value": 5.9055
+            }, {
+                "axis": "December",
+                "value": 10.6299
+            }],
+            [{
+                "axis": "January",
+                "value": 15.0787
+            }, {
+                "axis": "February",
+                "value": 18.622
+            }, {
+                "axis": "March",
+                "value": 25.9843
+            }, {
+                "axis": "April",
+                "value": 27.9134
+            }, {
+                "axis": "May",
+                "value": 26.8898
+            }, {
+                "axis": "November"
+            }, {
+                "axis": "December",
+                "value": 24.5669
+            }],
+            [{
+                "axis": "January",
+                "value": 35.7874
+            }, {
+                "axis": "February",
+                "value": 40.1575
+            }, {
+                "axis": "March",
+                "value": 49.3307
+            }, {
+                "axis": "April",
+                "value": 54.7638
+            }, {
+                "axis": "May",
+                "value": 54.8425
+            }, {
+                "axis": "November",
+                "value": 9.1339
+            }, {
+                "axis": "December",
+                "value": 22.3622
+            }],
+            [{
+                "axis": "January",
+                "value": 32.2441
+            }, {
+                "axis": "February",
+                "value": 41.811
+            }, {
+                "axis": "March",
+                "value": 53.0709
+            }, {
+                "axis": "April",
+                "value": 57.9921
+            }, {
+                "axis": "May",
+                "value": 59.8031
+            }, {
+                "axis": "November",
+                "value": 12.7165
+            }, {
+                "axis": "December",
+                "value": 18.8189
+            }],
+            [{
+                "axis": "January",
+                "value": 18.8583
+            }, {
+                "axis": "February"
+            }, {
+                "axis": "March",
+                "value": 51.6142
+            }, {
+                "axis": "April",
+                "value": 61.8504
+            }, {
+                "axis": "May",
+                "value": 57.0866
+            }, {
+                "axis": "November",
+                "value": 8.937
+            }, {
+                "axis": "December",
+                "value": 18.0315
+            }],
+            [{
+                "axis": "January",
+                "value": 22.6378
+            }, {
+                "axis": "February",
+                "value": 27.5197
+            }, {
+                "axis": "March",
+                "value": 36.2992
+            }, {
+                "axis": "April",
+                "value": 39.6063
+            }, {
+                "axis": "May",
+                "value": 38.8976
+            }, {
+                "axis": "November",
+                "value": 4.6457
+            }, {
+                "axis": "December",
+                "value": 8.7008
+            }],
+            [{
+                "axis": "January",
+                "value": 13.5827
+            }, {
+                "axis": "February",
+                "value": 20.9449
+            }, {
+                "axis": "March",
+                "value": 28.5433
+            }, {
+                "axis": "April",
+                "value": 31.7717
+            }, {
+                "axis": "May",
+                "value": 38.6614
+            }, {
+                "axis": "November",
+                "value": 7.7559
+            }, {
+                "axis": "December",
+                "value": 17.5591
+            }],
+            [{
+                "axis": "January",
+                "value": 22.7953
+            }, {
+                "axis": "February",
+                "value": 28.5827
+            }, {
+                "axis": "March",
+                "value": 33.7402
+            }, {
+                "axis": "April",
+                "value": 35.748
+            }, {
+                "axis": "May",
+                "value": 35.9449
+            }, {
+                "axis": "November",
+                "value": 8.2677
+            }, {
+                "axis": "December",
+                "value": 20.748
+            }],
+            [{
+                "axis": "January",
+                "value": 28.9764
+            }, {
+                "axis": "February",
+                "value": 36.6535
+            }, {
+                "axis": "March",
+                "value": 47.9134
+            }, {
+                "axis": "April",
+                "value": 47.9134
+            }, {
+                "axis": "May",
+                "value": 37.5984
+            }, {
+                "axis": "November",
+                "value": 15.748
+            }, {
+                "axis": "December",
+                "value": 20.8661
+            }],
+            [{
+                "axis": "January",
+                "value": 28.1102
+            }, {
+                "axis": "February",
+                "value": 36.1024
+            }, {
+                "axis": "March",
+                "value": 48.1102
+            }, {
+                "axis": "April",
+                "value": 55.315
+            }, {
+                "axis": "May",
+                "value": 55.1575
+            }, {
+                "axis": "November",
+                "value": 17.5197
+            }, {
+                "axis": "December",
+                "value": 19.8031
+            }],
+            [{
+                "axis": "January",
+                "value": 34.0551
+            }, {
+                "axis": "February",
+                "value": 38.937
+            }, {
+                "axis": "March",
+                "value": 43.1496
+            }, {
+                "axis": "April",
+                "value": 48.8583
+            }, {
+                "axis": "May",
+                "value": 46.811
+            }, {
+                "axis": "November",
+                "value": 7.2441
+            }, {
+                "axis": "December",
+                "value": 21.6535
+            }]
+        ];
+        const Berthoud = [
+            [{
+                "axis": "January",
+                "value": 11
+            }, {
+                "axis": "February",
+                "value": 12.9
+            }, {
+                "axis": "March",
+                "value": 17.8
+            }, {
+                "axis": "April",
+                "value": 20.8
+            }, {
+                "axis": "May",
+                "value": 23.3
+            }, {
+                "axis": "November",
+                "value": 5.8
+            }, {
+                "axis": "December",
+                "value": 7.7
+            }],
+            [{
+                "axis": "January",
+                "value": 13.3
+            }, {
+                "axis": "February",
+                "value": 17
+            }, {
+                "axis": "March",
+                "value": 21.7
+            }, {
+                "axis": "April",
+                "value": 24.6
+            }, {
+                "axis": "May",
+                "value": 27.1
+            }, {
+                "axis": "November",
+                "value": 2.7
+            }, {
+                "axis": "December",
+                "value": 3.2
+            }],
+            [{
+                "axis": "January",
+                "value": 4.3
+            }, {
+                "axis": "February",
+                "value": 7.5
+            }, {
+                "axis": "March",
+                "value": 11.7
+            }, {
+                "axis": "April",
+                "value": 13.8
+            }, {
+                "axis": "May",
+                "value": 11.2
+            }, {
+                "axis": "November",
+                "value": 3.3
+            }, {
+                "axis": "December",
+                "value": 9.5
+            }],
+            [{
+                "axis": "January",
+                "value": 14.2
+            }, {
+                "axis": "February",
+                "value": 15.9
+            }, {
+                "axis": "March",
+                "value": 18.3
+            }, {
+                "axis": "April",
+                "value": 22.5
+            }, {
+                "axis": "May",
+                "value": 23.6
+            }, {
+                "axis": "November",
+                "value": 3.5
+            }, {
+                "axis": "December",
+                "value": 7.8
+            }],
+            [{
+                "axis": "January",
+                "value": 10
+            }, {
+                "axis": "February",
+                "value": 13.7
+            }, {
+                "axis": "March",
+                "value": 21
+            }, {
+                "axis": "April",
+                "value": 27.9
+            }, {
+                "axis": "May",
+                "value": 32.6
+            }, {
+                "axis": "November",
+                "value": 7.3
+            }, {
+                "axis": "December",
+                "value": 16
+            }],
+            [{
+                "axis": "January",
+                "value": 17.1
+            }, {
+                "axis": "February",
+                "value": 20
+            }, {
+                "axis": "March",
+                "value": 24.1
+            }, {
+                "axis": "April",
+                "value": 30.9
+            }, {
+                "axis": "May",
+                "value": 33.4
+            }, {
+                "axis": "November",
+                "value": 6.5
+            }, {
+                "axis": "December",
+                "value": 9.4
+            }],
+            [{
+                "axis": "January",
+                "value": 12.4
+            }, {
+                "axis": "February",
+                "value": 14.6
+            }, {
+                "axis": "March",
+                "value": 18.6
+            }, {
+                "axis": "April",
+                "value": 20.8
+            }, {
+                "axis": "May",
+                "value": 20.3
+            }, {
+                "axis": "November",
+                "value": 6.9
+            }, {
+                "axis": "December",
+                "value": 10.4
+            }],
+            [{
+                "axis": "January",
+                "value": 12.5
+            }, {
+                "axis": "February",
+                "value": 17.6
+            }, {
+                "axis": "March",
+                "value": 19.8
+            }, {
+                "axis": "April",
+                "value": 24.8
+            }, {
+                "axis": "May",
+                "value": 24.8
+            }, {
+                "axis": "November",
+                "value": 6.1
+            }, {
+                "axis": "December",
+                "value": 7.9
+            }],
+            [{
+                "axis": "January",
+                "value": 11
+            }, {
+                "axis": "February",
+                "value": 13.3
+            }, {
+                "axis": "March",
+                "value": 16.3
+            }, {
+                "axis": "April",
+                "value": 17.5
+            }, {
+                "axis": "May",
+                "value": 14.1
+            }, {
+                "axis": "November",
+                "value": 3.9
+            }, {
+                "axis": "December",
+                "value": 8.3
+            }],
+            [{
+                "axis": "January",
+                "value": 12.9
+            }, {
+                "axis": "February",
+                "value": 16.1
+            }, {
+                "axis": "March",
+                "value": 20
+            }, {
+                "axis": "April",
+                "value": 22.1
+            }, {
+                "axis": "May",
+                "value": 22.6
+            }, {
+                "axis": "November",
+                "value": 4.8
+            }, {
+                "axis": "December",
+                "value": 8.9
+            }],
+            [{
+                "axis": "January",
+                "value": 11.4
+            }, {
+                "axis": "February",
+                "value": 15.3
+            }, {
+                "axis": "March",
+                "value": 18.3
+            }, {
+                "axis": "April",
+                "value": 21.5
+            }, {
+                "axis": "May",
+                "value": 19.1
+            }, {
+                "axis": "November",
+                "value": 2.4
+            }, {
+                "axis": "December",
+                "value": 6.1
+            }],
+            [{
+                "axis": "January",
+                "value": 6.9
+            }, {
+                "axis": "February",
+                "value": 8.9
+            }, {
+                "axis": "March",
+                "value": 13.4
+            }, {
+                "axis": "April",
+                "value": 15.5
+            }, {
+                "axis": "May",
+                "value": 15.9
+            }, {
+                "axis": "November",
+                "value": 2.9
+            }, {
+                "axis": "December",
+                "value": 6.3
+            }],
+            [{
+                "axis": "January",
+                "value": 8.9
+            }, {
+                "axis": "February",
+                "value": 11.3
+            }, {
+                "axis": "March",
+                "value": 18
+            }, {
+                "axis": "April",
+                "value": 23.6
+            }, {
+                "axis": "May",
+                "value": 23.8
+            }, {
+                "axis": "November",
+                "value": 8.1
+            }, {
+                "axis": "December",
+                "value": 9.4
+            }],
+            [{
+                "axis": "January",
+                "value": 11.8
+            }, {
+                "axis": "February",
+                "value": 14.6
+            }, {
+                "axis": "March",
+                "value": 21.1
+            }, {
+                "axis": "April",
+                "value": 23.3
+            }, {
+                "axis": "May",
+                "value": 20.3
+            }, {
+                "axis": "November",
+                "value": 4.5
+            }, {
+                "axis": "December",
+                "value": 6.4
+            }],
+            [{
+                "axis": "January",
+                "value": 9.8
+            }, {
+                "axis": "February",
+                "value": 16.2
+            }, {
+                "axis": "March",
+                "value": 22.5
+            }, {
+                "axis": "April",
+                "value": 30.1
+            }, {
+                "axis": "May",
+                "value": 30.8
+            }, {
+                "axis": "November",
+                "value": 3.2
+            }, {
+                "axis": "December",
+                "value": 6.1
+            }],
+            [{
+                "axis": "January",
+                "value": 10.4
+            }, {
+                "axis": "February",
+                "value": 13.7
+            }, {
+                "axis": "March",
+                "value": 17
+            }, {
+                "axis": "April",
+                "value": 20.2
+            }, {
+                "axis": "May",
+                "value": 19.8
+            }, {
+                "axis": "November",
+                "value": 3.3
+            }, {
+                "axis": "December",
+                "value": 3.7
+            }],
+            [{
+                "axis": "January",
+                "value": 7
+            }, {
+                "axis": "February",
+                "value": 11.5
+            }, {
+                "axis": "March",
+                "value": 14.8
+            }, {
+                "axis": "April",
+                "value": 19.3
+            }, {
+                "axis": "May",
+                "value": 23.1
+            }, {
+                "axis": "November",
+                "value": 4.3
+            }, {
+                "axis": "December",
+                "value": 6.4
+            }],
+            [{
+                "axis": "January",
+                "value": 14.2
+            }, {
+                "axis": "February",
+                "value": 20.1
+            }, {
+                "axis": "March",
+                "value": 25
+            }, {
+                "axis": "April",
+                "value": 29.9
+            }, {
+                "axis": "May",
+                "value": 30.5
+            }, {
+                "axis": "November",
+                "value": 3.5
+            }, {
+                "axis": "December",
+                "value": 9
+            }],
+            [{
+                "axis": "January",
+                "value": 13.6
+            }, {
+                "axis": "February",
+                "value": 16.8
+            }, {
+                "axis": "March",
+                "value": 19.7
+            }, {
+                "axis": "April",
+                "value": 30.5
+            }, {
+                "axis": "May",
+                "value": 31.4
+            }, {
+                "axis": "November",
+                "value": 3.6
+            }, {
+                "axis": "December",
+                "value": 7.7
+            }],
+            [{
+                "axis": "January",
+                "value": 10.6
+            }, {
+                "axis": "February",
+                "value": 13.6
+            }, {
+                "axis": "March",
+                "value": 18.3
+            }, {
+                "axis": "April",
+                "value": 23.8
+            }, {
+                "axis": "May",
+                "value": 23.2
+            }, {
+                "axis": "November",
+                "value": 1.9
+            }, {
+                "axis": "December",
+                "value": 3.2
+            }],
+            [{
+                "axis": "January",
+                "value": 8.3
+            }, {
+                "axis": "February",
+                "value": 10.6
+            }, {
+                "axis": "March",
+                "value": 13.9
+            }, {
+                "axis": "April",
+                "value": 20.8
+            }, {
+                "axis": "May",
+                "value": 23.1
+            }, {
+                "axis": "November",
+                "value": 1
+            }, {
+                "axis": "December",
+                "value": 4.4
+            }],
+            [{
+                "axis": "January",
+                "value": 7.8
+            }, {
+                "axis": "February",
+                "value": 12.2
+            }, {
+                "axis": "March",
+                "value": 17.1
+            }, {
+                "axis": "April",
+                "value": 19.3
+            }, {
+                "axis": "May",
+                "value": 18
+            }, {
+                "axis": "November",
+                "value": 3.1
+            }, {
+                "axis": "December",
+                "value": 8.2
+            }],
+            [{
+                "axis": "January",
+                "value": 9.9
+            }, {
+                "axis": "February",
+                "value": 12.8
+            }, {
+                "axis": "March",
+                "value": 18.3
+            }, {
+                "axis": "April",
+                "value": 22.3
+            }, {
+                "axis": "May",
+                "value": 20.4
+            }, {
+                "axis": "November",
+                "value": 2.8
+            }, {
+                "axis": "December",
+                "value": 4.5
+            }],
+            [{
+                "axis": "January",
+                "value": 7
+            }, {
+                "axis": "February",
+                "value": 8.8
+            }, {
+                "axis": "March",
+                "value": 11.1
+            }, {
+                "axis": "April",
+                "value": 10.9
+            }, {
+                "axis": "May",
+                "value": 6.4
+            }, {
+                "axis": "November",
+                "value": 2.9
+            }, {
+                "axis": "December",
+                "value": 4.6
+            }],
+            [{
+                "axis": "January",
+                "value": 7.5
+            }, {
+                "axis": "February",
+                "value": 11.8
+            }, {
+                "axis": "March",
+                "value": 20.2
+            }, {
+                "axis": "April",
+                "value": 24.7
+            }, {
+                "axis": "May",
+                "value": 26
+            }, {
+                "axis": "November",
+                "value": 3.8
+            }, {
+                "axis": "December",
+                "value": 6.4
+            }],
+            [{
+
+                "axis": "January",
+                "value": 9.8
+            }, {
+                "axis": "February",
+                "value": 12.8
+            }, {
+                "axis": "March",
+                "value": 14.6
+            }, {
+                "axis": "April",
+                "value": 14.9
+            }, {
+                "axis": "May",
+                "value": 14.5
+            }, {
+                "axis": "November",
+                "value": 4
+            }, {
+                "axis": "December",
+                "value": 7.9
+            }],
+            [{
+
+                "axis": "January",
+                "value": 10
+            }, {
+                "axis": "February",
+                "value": 12.4
+            }, {
+                "axis": "March",
+                "value": 16.2
+            }, {
+                "axis": "April",
+                "value": 18.4
+            }, {
+                "axis": "May",
+                "value": 19.8
+            }, {
+                "axis": "November",
+                "value": 4.8
+            }, {
+                "axis": "December",
+                "value": 10.2
+            }],
+            [{
+                "axis": "January",
+                "value": 14.7
+            }, {
+                "axis": "February",
+                "value": 17.5
+            }, {
+                "axis": "March",
+                "value": 21
+            }, {
+                "axis": "April",
+                "value": 24
+            }, {
+                "axis": "May",
+                "value": 22.4
+            }, {
+                "axis": "November",
+                "value": 4.7
+            }, {
+                "axis": "December",
+                "value": 8.5
+            }],
+            [{
+                "axis": "January",
+                "value": 10.8
+            }, {
+                "axis": "February",
+                "value": 13.3
+            }, {
+                "axis": "March",
+                "value": 16.4
+            }, {
+                "axis": "April",
+                "value": 22.2
+            }, {
+                "axis": "May",
+                "value": 21.3
+            }, {
+                "axis": "November",
+                "value": 1.9
+            }, {
+                "axis": "December",
+                "value": 6.8
+            }],
+            [{
+                "axis": "January",
+                "value": 10.8
+            }, {
+                "axis": "February",
+                "value": 16
+            }, {
+                "axis": "March",
+                "value": 20.3
+            }, {
+                "axis": "April",
+                "value": 24.3
+            }, {
+                "axis": "May",
+                "value": 24.4
+            }, {
+                "axis": "November",
+                "value": 3.7
+            }, {
+                "axis": "December",
+                "value": 9
+            }],
+            [{
+                "axis": "January",
+                "value": 13.3
+            }, {
+                "axis": "February",
+                "value": 16.3
+            }, {
+                "axis": "March",
+                "value": 19
+            }, {
+                "axis": "April",
+                "value": 24.7
+            }, {
+                "axis": "May",
+                "value": 23.3
+            }, {
+                "axis": "November",
+                "value": 5.2
+            }, {
+                "axis": "December",
+                "value": 7.5
+            }],
+            [{
+                "axis": "January",
+                "value": 10.1
+            }, {
+                "axis": "February",
+                "value": 13.4
+            }, {
+                "axis": "March",
+                "value": 18
+            }, {
+                "axis": "April",
+                "value": 21.7
+            }, {
+                "axis": "May",
+                "value": 24.5
+            }, {
+                "axis": "November",
+                "value": 5.6
+            }, {
+                "axis": "December",
+                "value": 9.7
+            }],
+            [{
+                "axis": "January",
+                "value": 15.2
+            }, {
+                "axis": "February",
+                "value": 18.3
+            }, {
+                "axis": "March",
+                "value": 25.2
+            }, {
+                "axis": "April",
+                "value": 32.3
+            }, {
+                "axis": "May",
+                "value": 34.8
+            }, {
+                "axis": "November",
+                "value": 3.8
+            }, {
+                "axis": "December",
+                "value": 4.9
+            }],
+            [{
+                "axis": "January",
+                "value": 8.3
+            }, {
+                "axis": "February",
+                "value": 12.1
+            }, {
+                "axis": "March",
+                "value": 13
+            }, {
+                "axis": "April",
+                "value": 9.7
+            }, {
+                "axis": "May",
+                "value": 3.1
+            }, {
+                "axis": "November",
+                "value": 1
+            }, {
+                "axis": "December",
+                "value": 4.8
+            }],
+            [{
+                "axis": "January",
+                "value": 6.9
+            }, {
+                "axis": "February",
+                "value": 10.5
+            }, {
+                "axis": "March",
+                "value": 15.3
+            }, {
+                "axis": "April",
+                "value": 21.8
+            }, {
+                "axis": "May",
+                "value": 22.9
+            }, {
+                "axis": "November",
+                "value": 4.4
+            }, {
+                "axis": "December",
+                "value": 8
+            }],
+            [{
+                "axis": "January",
+                "value": 13.5
+            }, {
+                "axis": "February",
+                "value": 19.7
+            }, {
+                "axis": "March",
+                "value": 24.5
+            }, {
+                "axis": "April",
+                "value": 26
+            }, {
+                "axis": "May",
+                "value": 26.7
+            }, {
+                "axis": "November",
+                "value": 4.4
+            }, {
+                "axis": "December",
+                "value": 8.9
+            }],
+            [{
+                "axis": "January",
+                "value": 11
+            }, {
+                "axis": "February",
+                "value": 15
+            }, {
+                "axis": "March",
+                "value": 15.5
+            }, {
+                "axis": "April",
+                "value": 16.8
+            }, {
+                "axis": "May",
+                "value": 19.4
+            }, {
+                "axis": "November",
+                "value": 5.9
+            }, {
+                "axis": "December",
+                "value": 9.1
+            }],
+            [{
+                "axis": "January",
+                "value": 12.3
+            }, {
+                "axis": "February",
+                "value": 14
+            }, {
+                "axis": "March",
+                "value": 20.7
+            }, {
+                "axis": "April",
+                "value": 23
+            }, {
+                "axis": "May",
+                "value": 23.6
+            }, {
+                "axis": "November",
+                "value": 2
+            }, {
+                "axis": "December",
+                "value": 7.1
+            }],
+            [{
+                "axis": "January",
+                "value": 13.1
+            }, {
+                "axis": "February",
+                "value": 15.2
+            }, {
+                "axis": "March",
+                "value": 16.7
+            }, {
+                "axis": "April",
+                "value": 18.6
+            }, {
+                "axis": "May",
+                "value": 18.3
+            }, {
+                "axis": "November",
+                "value": 2.7
+            }, {
+                "axis": "December",
+                "value": 6
+            }],
+            [{
+                "axis": "January",
+                "value": 8.7
+            }, {
+                "axis": "February",
+                "value": 11.1
+            }, {
+                "axis": "March",
+                "value": 14.8
+            }, {
+                "axis": "April",
+                "value": 18.5
+            }, {
+                "axis": "May",
+                "value": 17.5
+            }, {
+                "axis": "November",
+                "value": 5.1
+            }]
+        ]
+
+        const Revelstoke = [
+            [{
+                    "axis": "January",
+                    "value": 20.2
+                },
+                {
+                    "axis": "February",
+                    "value": 21.3
+                },
+                {
+                    "axis": "March",
+                    "value": 28.1
+                },
+                {
+                    "axis": "April",
+                    "value": 34.1
+                },
+                {
+                    "axis": "May",
+                    "value": 34.8
+                },
+                {
+                    "axis": "November",
+                    "value": 13
+                },
+                {
+                    "axis": "December",
+                    "value": 19.3
+                }
+            ],
+            [{
+                    "axis": "January",
+                    "value": 32.2
+                },
+                {
+                    "axis": "February",
+                    "value": 37.8
+                },
+                {
+                    "axis": "March",
+                    "value": 48.3
+                },
+                {
+                    "axis": "April",
+                    "value": 52.7
+                },
+                {
+                    "axis": "May",
+                    "value": 49.8
+                },
+                {
+                    "axis": "November",
+                    "value": 14.4
+                },
+                {
+                    "axis": "December",
+                    "value": 23.6
+                }
+            ],
+            [{
+                    "axis": "January",
+                    "value": 29.2
+                },
+                {
+                    "axis": "February",
+                    "value": 36.5
+                },
+                {
+                    "axis": "March",
+                    "value": 42.7
+                },
+                {
+                    "axis": "April",
+                    "value": 45.1
+                },
+                {
+                    "axis": "May",
+                    "value": 44.5
+                },
+                {
+                    "axis": "November",
+                    "value": 25.3
+                },
+                {
+                    "axis": "December",
+                    "value": 33.1
+                }
+            ],
+            [{
+                    "axis": "January",
+                    "value": 44.4
+                },
+                {
+                    "axis": "February",
+                    "value": 49.5
+                },
+                {
+                    "axis": "March",
+                    "value": 54.6
+                },
+                {
+                    "axis": "April",
+                    "value": 59.5
+                },
+                {
+                    "axis": "May",
+                    "value": 65.4
+                },
+                {
+                    "axis": "November",
+                    "value": 15.5
+                },
+                {
+                    "axis": "December",
+                    "value": 25.6
+                }
+            ],
+            [{
+                    "axis": "January",
+                    "value": 35.6
+                },
+                {
+                    "axis": "February",
+                    "value": 41.9
+                },
+                {
+                    "axis": "March",
+                    "value": 51.9
+                }, {
+                    "axis": "April",
+                    "value": 53.4
+                }, {
+                    "axis": "May",
+                    "value": 56.2
+                }, {
+                    "axis": "November",
+                    "value": 11.9
+                }, {
+                    "axis": "December",
+                    "value": 21.1
+                }
+            ],
+            [{
+                "axis": "January",
+                "value": 31.7
+            }, {
+                "axis": "February",
+                "value": 35.5
+            }, {
+                "axis": "March",
+                "value": 65.5
+            }, {
+                "axis": "April",
+                "value": 67.2
+            }, {
+                "axis": "May",
+                "value": 65.9
+            }, {
+                "axis": "November",
+                "value": 15.7
+            }, {
+                "axis": "December",
+                "value": 30.7
+            }],
+            [{
+                "axis": "January",
+                "value": 46.5
+            }, {
+                "axis": "February",
+                "value": 58.5
+            }, {
+                "axis": "March",
+                "value": 66.5
+            }, {
+                "axis": "April",
+                "value": 68.7
+            }, {
+                "axis": "May",
+                "value": 81.5
+            }, {
+                "axis": "November",
+                "value": 18.2
+            }, {
+                "axis": "December",
+                "value": 29.4
+            }],
+            [{
+                "axis": "January",
+                "value": 41
+            }, {
+                "axis": "February",
+                "value": 45.3
+            }, {
+                "axis": "March",
+                "value": 55.7
+            }, {
+                "axis": "April",
+                "value": 59.3
+            }, {
+                "axis": "May",
+                "value": 66.5
+            }, {
+                "axis": "November",
+                "value": 7
+            }, {
+                "axis": "December",
+                "value": 12.5
+            }],
+            [{
+                "axis": "January",
+                "value": 18.1
+            }, {
+                "axis": "February",
+                "value": 22.7
+            }, {
+                "axis": "March",
+                "value": 33.5
+            }, {
+                "axis": "April",
+                "value": 36.7
+            }, {
+                "axis": "May",
+                "value": 40.1
+            }, {
+                "axis": "November",
+                "value": 14.8
+            }, {
+                "axis": "December",
+                "value": 24.3
+            }],
+            [{
+                "axis": "January",
+                "value": 35.1
+            }, {
+                "axis": "February",
+                "value": 40.2
+            }, {
+                "axis": "March",
+                "value": 51.4
+            }, {
+                "axis": "April",
+                "value": 59.8
+            }, {
+                "axis": "May",
+                "value": 68.4
+            }, {
+                "axis": "November",
+                "value": 10.7
+            }, {
+                "axis": "December",
+                "value": 17
+            }],
+            [{
+                "axis": "January",
+                "value": 25.1
+            }, {
+                "axis": "February",
+                "value": 29.1
+            }, {
+                "axis": "March",
+                "value": 42.4
+            }, {
+                "axis": "April",
+                "value": 46.1
+            }, {
+                "axis": "May",
+                "value": 46.1
+            }, {
+                "axis": "November",
+                "value": 12.9
+            }, {
+                "axis": "December",
+                "value": 18.9
+            }],
+            [{
+                "axis": "January",
+                "value": 29.8
+            }, {
+                "axis": "February",
+                "value": 32.7
+            }, {
+                "axis": "March",
+                "value": 41.8
+            }, {
+                "axis": "April",
+                "value": 42.6
+            }, {
+                "axis": "May",
+                "value": 42.4
+            }, {
+                "axis": "November",
+                "value": 12.3
+            }, {
+                "axis": "December",
+                "value": 12.3
+            }],
+            [{
+                "axis": "January",
+                "value": 32.6
+            }, {
+                "axis": "February",
+                "value": 35.9
+            }, {
+                "axis": "March",
+                "value": 40.2
+            }, {
+                "axis": "April",
+                "value": 43.6
+            }, {
+                "axis": "May",
+                "value": 41
+            }, {
+                "axis": "November",
+                "value": 12.7
+            }, {
+                "axis": "December",
+                "value": 17.3
+            }],
+            [{
+                "axis": "January",
+                "value": 31.4
+            }, {
+                "axis": "February",
+                "value": 39.4
+            }, {
+                "axis": "March",
+                "value": 44
+            }, {
+                "axis": "April",
+                "value": 49.2
+            }, {
+                "axis": "May",
+                "value": 48.9
+            }, {
+                "axis": "November",
+                "value": 20.2
+            }, {
+                "axis": "December",
+                "value": 21.4
+            }],
+            [{
+                "axis": "January",
+                "value": 36.8
+            }, {
+                "axis": "February",
+                "value": 47.1
+            }, {
+                "axis": "March",
+                "value": 58.6
+            }, {
+                "axis": "April",
+                "value": 62.7
+            }, {
+                "axis": "May",
+                "value": 63.6
+            }, {
+                "axis": "November",
+                "value": 17
+            }, {
+                "axis": "December",
+                "value": 26.9
+            }],
+            [{
+                "axis": "January",
+                "value": 35.9
+            }, {
+                "axis": "February",
+                "value": 44.4
+            }, {
+                "axis": "March",
+                "value": 50.6
+            }, {
+                "axis": "April",
+                "value": 53.3
+            }, {
+                "axis": "May",
+                "value": 53.3
+            }, {
+                "axis": "November",
+                "value": 11.2
+            }, {
+                "axis": "December",
+                "value": 16.7
+            }],
+            [{
+                "axis": "January",
+                "value": 26.4
+            }, {
+                "axis": "February",
+                "value": 30.1
+            }, {
+                "axis": "March",
+                "value": 37.8
+            }, {
+                "axis": "April",
+                "value": 40.7
+            }, {
+                "axis": "May",
+                "value": 42.8
+            }, {
+                "axis": "November",
+                "value": 17.4
+            }, {
+                "axis": "December",
+                "value": 20.5
+            }],
+            [{
+                "axis": "January",
+                "value": 28.5
+            }, {
+                "axis": "February",
+                "value": 32.2
+            }, {
+                "axis": "March",
+                "value": 37.8
+            }, {
+                "axis": "April",
+                "value": 41.6
+            }, {
+                "axis": "May",
+                "value": 40.2
+            }, {
+                "axis": "November",
+                "value": 3.8
+            }, {
+                "axis": "December",
+                "value": 0
+            }],
+            [{
+                "axis": "January",
+                "value": 22
+            }, {
+                "axis": "February",
+                "value": 31.5
+            }, {
+                "axis": "March",
+                "value": 0
+            }, {
+                "axis": "April",
+                "value": 0
+            }, {
+                "axis": "May",
+                "value": 0
+            }, {
+                "axis": "November",
+                "value": 18
+            }, {
+                "axis": "December",
+                "value": 20.2
+            }],
+            [{
+                "axis": "January",
+                "value": 0
+            }, {
+                "axis": "February",
+                "value": 0
+            }, {
+                "axis": "March",
+                "value": 0
+            }, {
+                "axis": "April",
+                "value": 38.5
+            }, {
+                "axis": "May",
+                "value": 38.5
+            }, {
+                "axis": "November",
+                "value": 13.8
+            }, {
+                "axis": "December",
+                "value": 22.4
+            }],
+            [{
+                "axis": "January",
+                "value": 29.6
+            }, {
+                "axis": "February",
+                "value": 37.4
+            }, {
+                "axis": "March",
+                "value": 48
+            }, {
+                "axis": "April",
+                "value": 55.2
+            }, {
+                "axis": "May",
+                "value": 56.8
+            }, {
+                "axis": "November",
+                "value": 10.7
+            }, {
+                "axis": "December",
+                "value": 19.3
+            }],
+            [{
+                "axis": "January",
+                "value": 26.7
+            }, {
+                "axis": "February",
+                "value": 34.6
+            }, {
+                "axis": "March",
+                "value": 46.7
+            }, {
+                "axis": "April",
+                "value": 53.3
+            }, {
+                "axis": "May",
+                "value": 49.9
+            }, {
+                "axis": "November",
+                "value": 12.5
+            }, {
+                "axis": "December",
+                "value": 17.7
+            }],
+            [{
+                "axis": "January",
+                "value": 27
+            }, {
+                "axis": "February",
+                "value": 33.5
+            }, {
+                "axis": "March",
+                "value": 39.4
+            }, {
+                "axis": "April",
+                "value": 42.4
+            }, {
+                "axis": "May",
+                "value": 42
+            }, {
+                "axis": "November",
+                "value": 14.6
+            }, {
+                "axis": "December",
+                "value": 23.4
+            }],
+            [{
+                "axis": "January",
+                "value": 31.9
+            }, {
+                "axis": "February",
+                "value": 41.5
+            }, {
+                "axis": "March",
+                "value": 50.6
+            }, {
+                "axis": "April",
+                "value": 52.2
+            }, {
+                "axis": "May",
+                "value": 44
+            }, {
+                "axis": "November",
+                "value": 15.7
+            }, {
+                "axis": "December",
+                "value": 23.5
+            }],
+            [{
+                "axis": "January",
+                "value": 27.2
+            }, {
+                "axis": "February",
+                "value": 33.5
+            }, {
+                "axis": "March",
+                "value": 46.6
+            }, {
+                "axis": "April",
+                "value": 55.6
+            }, {
+                "axis": "May",
+                "value": 55.4
+            }, {
+                "axis": "November",
+                "value": 14.2
+            }, {
+                "axis": "December",
+                "value": 19.2
+            }],
+            [{
+                "axis": "January",
+                "value": 32.2
+            }, {
+                "axis": "February",
+                "value": 42.8
+            }, {
+                "axis": "March",
+                "value": 49.6
+            }, {
+                "axis": "April",
+                "value": 57
+            }, {
+                "axis": "May",
+                "value": 51.8
+            }, {
+                "axis": "November",
+                "value": 14.4
+            }, {
+                "axis": "December",
+                "value": 24.1
+            }]
+        ];
+
+        const Steamboat = [[{
+    "axis":"January","value":29.8},{
+    "axis":"February","value":39.6},{
+    "axis":"March","value":51.2},{
+    "axis":"April","value":56.9},{
+    "axis":"May","value":59.8},{
+    "axis":"November","value":4.5},{
+    "axis":"December","value":8.8}
+    ],[{
+        "axis":"January","value":10.2},{
+        "axis":"February","value":15},{
+        "axis":"March","value":23.4},{
+        "axis":"April","value":27.7},{
+        "axis":"May","value":32.2},{
+        "axis":"November","value":11.5},{
+        "axis":"December","value":29.7}
+    ],[
+        {
+            "axis":"January","value":40.3},{
+            "axis":"February","value":42.1},{
+            "axis":"March","value":53.4},{
+            "axis":"April","value":58.1},{
+            "axis":"May","value":59.9},{
+            "axis":"November","value":16},{
+            "axis":"December","value":24}
+],[
+    {
+            "axis":"January","value":27.3},{
+            "axis":"February","value":33.9},{
+            "axis":"March","value":43.8},{
+            "axis":"April","value":54.4},{
+            "axis":"May","value":63.9},{
+            "axis":"November","value":18.6},{
+            "axis":"December","value":39.8}
+],[
+    {
+        "axis":"January","value":40.9},{
+        "axis":"February","value":42.7},{
+        "axis":"March","value":49.9},{
+        "axis":"April","value":58.4},{
+        "axis":"May","value":61.8},{
+        "axis":"November","value":17.8},{
+        "axis":"December","value":27.7}
+],[{
+    "axis":"January","value":33.8},{
+    "axis":"February","value":36.8},{
+    "axis":"March","value":45},{
+    "axis":"April","value":51.9},{
+    "axis":"May","value":54.8},{
+    "axis":"November","value":26.8},{
+    "axis":"December","value":35.4}
+],[{
+    "axis":"January","value":38.4},{
+    "axis":"February","value":55.5},{
+    "axis":"March","value":60.7},{
+    "axis":"April","value":70.4},{
+    "axis":"May","value":70.3},{
+    "axis":"November","value":19.8},{
+    "axis":"December","value":20.8}
+],[{
+    "axis":"January","value":25.3},{
+    "axis":"February","value":28.5},{
+    "axis":"March","value":34.8},{
+    "axis":"April","value":38},{
+    "axis":"May","value":36.8},{
+    "axis":"November","value":6.8},{
+    "axis":"December","value":16}
+],[{
+    "axis":"January","value":28},{
+    "axis":"February","value":38.5},{
+    "axis":"March","value":47.6},{
+    "axis":"April","value":53.8},{
+    "axis":"May","value":55.6},{
+    "axis":"November","value":12.5},{
+    "axis":"December","value":22.6}
+],[{
+    "axis":"January","value":28},{
+    "axis":"February","value":35.9},{
+    "axis":"March","value":45.7},{
+    "axis":"April","value":52.6},{
+    "axis":"May","value":51.5},{
+    "axis":"November","value":11.7},{
+    "axis":"December","value":22.2}
+],[{
+    "axis":"January","value":27.8},{
+    "axis":"February","value":35.7},{
+    "axis":"March","value":45.8},{
+    "axis":"April","value":49.5},{
+    "axis":"May","value":49.1},{
+    "axis":"November","value":7.8},{
+    "axis":"December","value":14.4}
+],[{
+    "axis":"January","value":22.1},{
+    "axis":"February","value":28},{
+    "axis":"March","value":41.6},{
+    "axis":"April","value":51.8},{
+    "axis":"May","value":52},{
+    "axis":"November","value":14.3},{
+    "axis":"December","value":18.4}
+],[{
+    "axis":"January","value":23.4},{
+    "axis":"February","value":31.1},{
+    "axis":"March","value":39.6},{
+    "axis":"April","value":44.2},{
+    "axis":"May","value":42.9},{
+    "axis":"November","value":11},{
+    "axis":"December","value":20.3}
+],[{
+    "axis":"January","value":31.8},{
+    "axis":"February","value":44.2},{
+    "axis":"March","value":53.4},{
+    "axis":"April","value":65.8},{
+    "axis":"May","value":68},{
+    "axis":"November","value":14},{
+    "axis":"December","value":19.6}
+    ],[{
+        "axis":"January","value":26.6},{
+        "axis":"February","value":33.3},{
+        "axis":"March","value":37.7},{
+        "axis":"April","value":46.1},{
+        "axis":"May","value":47.9},{
+        "axis":"November","value":9.7},{
+        "axis":"December","value":16.3}
+],[{
+    "axis":"January","value":27.3},{
+    "axis":"February","value":36.1},{
+    "axis":"March","value":45.6},{
+    "axis":"April","value":57.1},{
+    "axis":"May","value":69.7},{
+    "axis":"November","value":17.8},{
+    "axis":"December","value":23.8}
+],[{
+    "axis":"January","value":38.8},{
+    "axis":"February","value":48.6},{
+    "axis":"March","value":53.9},{
+    "axis":"April","value":59.9},{
+    "axis":"May","value":60.4},{
+    "axis":"November","value":15.1},{
+    "axis":"December","value":32.6}
+],[{
+    "axis":"January","value":46.2},{
+    "axis":"February","value":50},{
+    "axis":"March","value":53.5},{
+    "axis":"April","value":61.3},{
+    "axis":"May","value":62.4},{
+    "axis":"November","value":11.4},{
+    "axis":"December","value":14.3}
+],[{
+    "axis":"January","value":27.5},{
+    "axis":"February","value":37.9},{
+    "axis":"March","value":43.7},{
+    "axis":"April","value":53.4},{
+    "axis":"May","value":54},{
+    "axis":"November","value":11.6},{
+    "axis":"December","value":14.6}
+],[{
+    "axis":"January","value":27.7},{
+    "axis":"February","value":37.9},{
+    "axis":"March","value":42.5},{
+    "axis":"April","value":54.6},{
+    "axis":"May","value":58},{
+    "axis":"November","value":4.4},{
+    "axis":"December","value":14.1}
+],[{
+    "axis":"January","value":25.6},{
+    "axis":"February","value":37.7},{
+    "axis":"March","value":45.5},{
+    "axis":"April","value":47},{
+    "axis":"May","value":43.6},{
+    "axis":"November","value":9.4},{
+    "axis":"December","value":18.8}
+],[{
+    "axis":"January","value":22.4},{
+    "axis":"February","value":29.4},{
+    "axis":"March","value":35.9},{
+    "axis":"April","value":39.8},{
+    "axis":"May","value":38.3},{
+    "axis":"November","value":6.8},{
+    "axis":"December","value":13.3}
+],[{
+    "axis":"January","value":18.5},{
+    "axis":"February","value":22.3},{
+    "axis":"March","value":28.4},{
+    "axis":"April","value":30.6},{
+    "axis":"May","value":30.2},{
+    "axis":"November","value":11.1},{
+    "axis":"December","value":17.5}
+],[{
+    "axis":"January","value":23.5},{
+    "axis":"February","value":34.1},{
+    "axis":"March","value":42.8},{
+    "axis":"April","value":50.6},{
+    "axis":"May","value":54.4},{
+    "axis":"November","value":13.4},{
+    "axis":"December","value":20.4}
+],[{
+    "axis":"January","value":24.8},{
+    "axis":"February","value":29.5},{
+    "axis":"March","value":33.4},{
+    "axis":"April","value":40.6},{
+    "axis":"May","value":39.7},{
+    "axis":"November","value":12.3},{
+    "axis":"December","value":18.5}
+],[{
+    "axis":"January","value":24},{
+    "axis":"February","value":30.5},{
+    "axis":"March","value":37.9},{
+    "axis":"April","value":40.9},{
+    "axis":"May","value":43.9},{
+    "axis":"November","value":10.9},{
+    "axis":"December","value":25.7}
+],[{
+    "axis":"January","value":37.4},{
+    "axis":"February","value":44.4},{
+    "axis":"March","value":50.9},{
+    "axis":"April","value":56.5},{
+    "axis":"May","value":55.2},{
+    "axis":"November","value":9.5},{
+    "axis":"December","value":14.2}
+],[{
+    "axis":"January","value":16.3},{
+    "axis":"February","value":26.7},{
+    "axis":"March","value":30},{
+    "axis":"April","value":32.9},{
+    "axis":"May","value":30.1},{
+    "axis":"November","value":5},{
+    "axis":"December","value":14.3}
+],[{
+    "axis":"January","value":25.9},{
+    "axis":"February","value":37.2},{
+    "axis":"March","value":43.1},{
+    "axis":"April","value":48.7},{
+    "axis":"May","value":51.5},{
+    "axis":"November","value":6.9},{
+    "axis":"December","value":13.7}
+],[{
+    "axis":"January","value":28.5},{
+    "axis":"February","value":37},{
+    "axis":"March","value":43.2},{
+    "axis":"April","value":49.6},{
+    "axis":"May","value":52.1},{
+    "axis":"November","value":9.6},{
+    "axis":"December","value":15.6}
+],[{
+    "axis":"January","value":21.4},{
+    "axis":"February","value":28.1},{
+    "axis":"March","value":32.7},{
+    "axis":"April","value":38.2},{
+    "axis":"May","value":45.1},{
+    "axis":"November","value":15.8},{
+    "axis":"December","value":27.7}
+],[{
+    "axis":"January","value":37.2},{
+    "axis":"February","value":44.8},{
+    "axis":"March","value":56},{
+    "axis":"April","value":72.4},{
+    "axis":"May","value":79.7},{
+    "axis":"November","value":7.8},{
+    "axis":"December","value":10.5}
+],[{
+    "axis":"January","value":16.2},{
+    "axis":"February","value":25.6},{
+    "axis":"March","value":27.7},{
+    "axis":"April","value":27.4},{
+    "axis":"May","value":24.8},{
+    "axis":"November","value":3.9},{
+    "axis":"December","value":12.7}
+],[{
+    "axis":"January","value":17.1},{
+    "axis":"February","value":23.6},{
+    "axis":"March","value":31.6},{
+    "axis":"April","value":38.6},{
+    "axis":"May","value":39},{
+    "axis":"November","value":11.3},{
+    "axis":"December","value":16.8}
+],[{
+    "axis":"January","value":28.8},{
+    "axis":"February","value":42.4},{
+    "axis":"March","value":51.3},{
+    "axis":"April","value":54.7},{
+    "axis":"May","value":56.1},{
+    "axis":"November","value":10.1},{
+    "axis":"December","value":17.1}
+],[{
+    "axis":"January","value":19.1},{
+    "axis":"February","value":26.6},{
+    "axis":"March","value":29.5},{
+    "axis":"April","value":32.1},{
+    "axis":"May","value":32.8},{
+    "axis":"November","value":6.1},{
+    "axis":"December","value":14.1}
+],[{
+    "axis":"January","value":22.6},{
+    "axis":"February","value":27},{
+    "axis":"March","value":38.4},{
+    "axis":"April","value":45.8},{
+    "axis":"May","value":48.9},{
+    "axis":"November","value":4.8},{
+    "axis":"December","value":14.7}
+],[{
+    "axis":"January","value":30.4},{
+    "axis":"February","value":37.7},{
+    "axis":"March","value":39.4},{
+    "axis":"April","value":44.1},{
+    "axis":"May","value":44.5},{
+    "axis":"November","value":7.1},{
+    "axis":"December","value":12.3}
+],[{
+    "axis":"January","value":18.1},{
+    "axis":"February","value":27.1},{
+    "axis":"March","value":34.4},{
+    "axis":"April","value":45.3},{
+    "axis":"May","value":45.4},{
+    "axis":"November","value":13},{
+    "axis":"December","value":19.9}]
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ////////////////////////////////////////////////////////////// 
+        //////////////////// Draw the Chart ////////////////////////// 
+        ////////////////////////////////////////////////////////////// 
+
+        var color = d3.scaleOrdinal()
+            .range(["#CC333F"]);
+
+        var radarChartOptions = {
+            w: width,
+            h: height,
+            margin: margin,
+            maxValue: 0.5,
+            levels: 5,
+            roundStrokes: true,
+            color: color
+        };
+        //Call function to draw the Radar chart
+        RadarChart("#revelstoke", Revelstoke, radarChartOptions, "Revelstoke");
+        RadarChart("#berthoud", Berthoud, radarChartOptions, "Berthoud");
+        RadarChart("#whistler", Whistler, radarChartOptions, "Whistler");
+        RadarChart("#steamboat", Steamboat, radarChartOptions, "Steamboat");
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>MultiLine Chart with Filter Tester #2 </title>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            font: 20px Arial;
+        }
+
+        .line {
+            stroke-width: 2;
+            fill: none;
+        }
+        .legend:hover{
+            cursor:pointer;
+        }
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: grey;
+            stroke-width: 2;
+            shape-rendering: crispEdges;
+        }
+
+        .legend {
+            font-size: 16px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <script>
+      
+        
+        
+        
+        // Set the dimensions of the canvas / graph
+        var margin = {
+                top: 30,
+                right: 150,
+                bottom: 70,
+                left: 50
+            },
+            width = 800 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom;
+
+        // Parse the date / time
+        var parseDate = d3.timeParse("%Y");
+
+
+        // Set the ranges
+        var x = d3.scaleTime().range([0, width]);
+        var y = d3.scaleLinear().range([height, 0]);
+
+        // Define the line. This chooses the pairs of data to be a date and a value. It will
+        //be called later when the lines are drawn. 
+        var valueline = d3.line()
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y(function (d) {
+                return y(d.value);
+            });
+
+        // Adds the svg canvas
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Get the files[0]
+
+
+            // Promise.all allows for two data files to be loaded. This is because I 
+            // wanted the trendline to be a separate line from (not connected to) the 
+            // mountain lines
+        Promise.all([
+            d3.csv("allMountains_annualMax.csv"),
+            d3.csv("trendlines.csv"),
+        ]).then(function (files) {
+            // files[0] will contain file1.csv
+            // files[1] will contain file2.csv
+
+            // this sets up the variables to be the right type (date and numeric)
+            files[0].forEach(function (d) {
+                d.date = parseDate(d.date);
+                d.value = +d.value;
+            });
+            files[1].forEach(function (d) {
+                d.date = parseDate(d.date);
+                d.value = +d.value;
+            });
+
+            // Scale the range of the files[0]
+            // pull the full extent of the dates
+            x.domain(d3.extent(files[0], function (d) {
+                return d.date;
+            }));
+            // set the max y value on the y axis to be the max y value of the data
+            y.domain([0, d3.max(files[0], function (d) {
+                return d.value;
+            })]);
+
+            // Nest the entries by mountain. Before this nesting the files[0] is not organized in any 
+            //specific way except line by line as it's written. This nesting groups the files[0] by mountain. 
+
+        //IMPORTANT: the sorting of the raw csv file makes a difference. The CSV must be sorted by date and then
+        // mountain for this to work. D3 will draw the values as they are listed in the csv file.
+        //There is probably a way to sort the data within D3 but it's not done here.
+            var dataNest = d3.nest()
+                .key(function (d) {
+                    return d.mountain;
+                })
+                .entries(files[0]);
+
+                
+                
+                
+
+            var trendlinesNest = d3.nest()
+                .key(function (d) {
+                    return d.mountain;
+                })
+                .entries(files[1]);
+
+            // set the colour scale
+            var color = d3.scaleOrdinal(["#ccddec","#b2cae1","#9cb3d5","#8f95c6","#8c74b5","#8952a5","#852d8f","#730f71","#4d004b"]);
+
+            // Loop through each mountain / key
+            dataNest.forEach(function (d, i) {
+
+                //this draws the individual mountain lines
+                svg.append("path")
+                    .attr("class", "line")
+                    .style("stroke", function () { // Add the colours dynamically
+                        return d.color = color(d.key);
+                    })
+                    // assign an ID. The /\.. part removes and spaces from the name.
+                    .attr("id", 'tag' + d.key.replace(/\s+/g, '')) 
+                    //this calls back to the valueline definition at the end. The attribute "d" refers
+                    // to the fact that this is an SVG path. https://www.dashingd3js.com/svg-paths-and-d3js
+                    .attr("d", valueline(d.values));
+
+
+            });
+
+            trendlinesNest.forEach(function (d, i) {
+                //draw the trendlines
+                svg.append("path")
+                    .attr("class", "trendline")
+                    .style("stroke", function () { // Add the colours dynamically
+                        return d.color = color(d.key);
+                    })
+                    .style("stroke-dasharray", ("3,3"))
+                    // assign an ID- we'll use the same ID here as the mountains lines so that 
+                    // they both disappear at the same time when the legend is clicked. 
+                    .attr("id", 'tag' + d.key.replace(/\s+/g, '')) 
+                    .attr("d", valueline(d.values));
+            });
+
+            legendSpace = height / dataNest.length -5; // spacing for the legend
+            console.log(legendSpace);
+
+
+            // Add the Legend
+            dataNest.forEach(function(d,i){
+                svg.append("text")
+                // .data(dataNest)
+                .attr("x", width + (margin.right/2) + 5) // place legend on the right
+                .attr("y", legendSpace * i + ((height- (legendSpace * dataNest.length))/2)) //space and vertically center legend
+                .attr("class", "legend") // style the legend
+                .attr("id", d.key.replace(/\s+/g, ''))
+                .style("fill", function () { // Add the colours dynamically
+                    return d.color = color(d.key);
+                })
+                .on("click", function () {
+                    // Determine if current line is visible 
+                    // assign a value of true or false to active if the element is active
+                    var active = d.active ? false : true,
+                    //assign a value of 0 or 1 to newOpacity depending on the outcome of active
+                        newOpacity = active ? 0 : 1;
+                    // Hide or show the elements based on the ID
+                    d3.selectAll("#tag" + d.key.replace(/\s+/g, ''))
+                        .transition().duration(100)
+                        .style("opacity", newOpacity);
+                    // Update whether or not the elements are active
+                    d.active = active;
+                })
+                .text(d.key);// the key was assigned back in the nesting section
+            });
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add the Y Axis
+            svg.append("g")
+                .attr("class", "axis")
+                .call(d3.axisLeft(y));
+
+
+        }).catch(function (err) {
+            // handle error here
+        });
+    </script>
+</body>
+
+</html>
+
+

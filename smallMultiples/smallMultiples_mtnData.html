@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Small Multiples with Mountain Data</title>
+</head>
+<style>
+
+body {
+  font: 10px sans-serif;
+  margin: 0;
+  text-anchor: end;
+}
+
+.line {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.5px;
+}
+
+.area {
+  fill: #123451;
+}
+.axis text{
+  font-size: 12px;
+}
+.mountainNames{
+  font: 2em serif;
+  color: #ffffff;
+  fill:#ffffff;
+
+}
+
+</style>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+<script>
+
+var margin = {top: 18, right: 15, bottom: 22, left: 30},
+    width = 960 - margin.left - margin.right,
+    height = 90 - margin.top - margin.bottom;
+
+
+//ScalePoint is crucial here. ScaleBand works similarly as they both create bands across
+// the x-axis that are mapped to the months in the
+//domain. ScaleOrdinal, seems like it would work but instead maps November-->0, December-->960 etc.
+//ScaleBand doesn't work as it splits the range into n bands (where n is the number of values in the domain array).
+// This causes there to be space to the left of the first element in the axis and to the right of the last. 
+// Finally, scalePoint solves all of these problems and puts November at the farthest most left point on the
+// x axis and May at the farthest most right point. 
+//It's also tempting to use rangeRound. This causes strange things at the ends of the axis as well, so just use
+// range.
+var x = d3.scalePoint()
+    .range([0,width])
+
+
+    var x_axis = d3.axisBottom()
+                    .scale(x);
+
+d3.csv("allMountains_monthly_allYears.csv", type, function(error, data) {
+  if (error) throw error;
+
+  var symbols = d3.nest()
+      .key(function(d) { return d.symbol; })
+      .entries(data);
+
+ // look at the console to see what symbols now looks like.     
+  console.log(symbols);
+
+  //Create months array to be used for the x axis?
+//   var months=[];
+
+//   for(i=0;i<symbols[0].values.length; i++){
+//     currentMonth = symbols[0].values[i].date;
+//     months.push(currentMonth);
+//   }
+  
+    //the map function performs the same action as the for loop above. It creates
+    //an array of just the dates.
+    x.domain(data.map(function(d){return d.date}));
+    console.log(x.step());
+    
+
+  var svg = d3.select("body").selectAll("svg")
+      .data(symbols)
+    .enter().append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      //multiple is called here for each element in symbols. This creates
+      // the individual charts because an SVG is created for each one.
+      .each(multiple);
+
+//add the chart names (mountain names)
+  svg.append("text")
+      .attr("class","mountainNames")
+      .attr("x", width - 6)
+      .attr("y", height - 6)
+      .text(function(d) { return d.key; });
+});
+
+// in this case symbol is going to be the "each" from above. The "each" call 
+// will cycle through symbols and pass each one to multiple
+function multiple(symbol) {
+  var svg = d3.select(this);
+
+// the x scale was ordinal but the y is continuous so we use a Linear scale.
+  var y = d3.scaleLinear()
+      .domain([0, d3.max(symbol.values, function(d) { return d.price; })])
+      .range([height, 0]);
+
+//.area is one of the SVG primitives (https://github.com/d3/d3-shape#symbols)
+  var area = d3.area()
+      .x(function(d) { return x(d.date); })
+      .y0(height)
+      .y1(function(d) { return y(d.price); });
+
+//.line is another primitive
+  var line = d3.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.price); });
+
+ //even though this is creating the area, a "path" is appended. Changing this to 
+ //"area" makes the area go away. Use the area variable created above. Call
+ // symbol.values instead of d.values because "symbol" is what was passed 
+ // to this function
+  svg.append("path")
+      .attr("class", "area")
+      .attr("d", area(symbol.values));
+
+  svg.append("path")
+      .attr("class", "line")
+      .attr("d", line(symbol.values));
+
+//append the x-axis. Make sure to move the axis down by the height of the 
+// chart as otherwise it will sit on top of the chart. Fix any margins to 
+// get all text to show up right.
+svg.append("g")
+.attr("class","axis")
+.attr("transform","translate(0,"+height+")")
+.call(x_axis)
+}
+
+//define the types of the data. the +d.price sets the price to a numeric
+function type(d) {
+  d.price = +d.price;
+  d.date = d.date;
+  return d;
+}
+
+</script>

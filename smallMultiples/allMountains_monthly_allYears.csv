@@ -1,0 +1,141 @@
+date,symbol,price
+November,Mt Baker,0.64375
+November,Jackson,1.234210526
+November,Revelstoke,9.511336032
+November,Winter Park,3.985365854
+November,Crested Butte,2.961538462
+November,Purgatory,2.187804878
+November,Breckenridge,4.282051282
+November,Loveland,4.18974359
+November,Aspen,4.192307692
+November,Eldora,2.55
+November,Snowmass,3.241176471
+November,Powderhorn,6.324390244
+November,Monarch,3.356097561
+November,Telluride,5.738461538
+November,Steamboat,11.1875
+November,Vail,4.66097561
+November,Wolf Creek,7.651515152
+November,Snowbird,1.7
+November,Whistler,9.741907261
+November,Squaw,1.239473684
+December,Mt Baker,9.25625
+December,Jackson,5.763157895
+December,Revelstoke,18.09156627
+December,Winter Park,7.4225
+December,Crested Butte,5.774358974
+December,Purgatory,5.187804878
+December,Breckenridge,7.325641026
+December,Loveland,7.384615385
+December,Aspen,7.11025641
+December,Eldora,4.78
+December,Snowmass,6.506060606
+December,Powderhorn,11.41707317
+December,Monarch,6.365853659
+December,Telluride,9.784615385
+December,Steamboat,19.13
+December,Vail,8.1
+December,Wolf Creek,12.96060606
+December,Squaw,7.368421053
+December,Snowbird,6.7
+December,Whistler,18.50691511
+January,Mt Baker,19.98125
+January,Jackson,11.41842105
+January,Revelstoke,26.94246795
+January,Monarch,9.475
+January,Winter Park,10.8075
+January,Crested Butte,8.726315789
+January,Purgatory,8.8325
+January,Breckenridge,10.05526316
+January,Loveland,10.37368421
+January,Aspen,9.85
+January,Telluride,13.65
+January,Eldora,7.066666667
+January,Snowmass,10.1969697
+January,Powderhorn,16.22
+January,Steamboat,27.15384615
+January,Vail,11.875
+January,Wolf Creek,18.4625
+January,Whistler,26.4811887
+January,Snowbird,13.4
+January,Squaw,19.81578947
+February,Mt Baker,32.05625
+February,Jackson,16.91052632
+February,Revelstoke,34.55804954
+February,Winter Park,14.11
+February,Crested Butte,11.73684211
+February,Purgatory,12.4825
+February,Breckenridge,12.74736842
+February,Loveland,13.42631579
+February,Aspen,12.77105263
+February,Eldora,9.505128205
+February,Snowmass,14.47878788
+February,Powderhorn,21.215
+February,Monarch,12.68
+February,Telluride,17.97368421
+February,Steamboat,34.94871795
+February,Vail,15.4775
+February,Wolf Creek,24.25625
+February,Snowbird,21.9
+February,Whistler,32.26303587
+February,Squaw,31.17368421
+March,Mt Baker,42.84375
+March,Jackson,21.75789474
+March,Revelstoke,42.93148936
+March,Aspen,15.98157895
+March,Winter Park,18.23
+March,Crested Butte,14.51842105
+March,Purgatory,14.295
+March,Breckenridge,15.87368421
+March,Loveland,16.65526316
+March,Eldora,12.36923077
+March,Snowmass,17.43636364
+March,Powderhorn,26.76
+March,Monarch,15.65
+March,Telluride,22.90526316
+March,Steamboat,42.17692308
+March,Vail,19.825
+March,Wolf Creek,29.259375
+March,Whistler,41.15962927
+March,Snowbird,29.7
+March,Squaw,42.29736842
+April,Mt Baker,58.18125
+April,Jackson,26.70263158
+April,Revelstoke,48.76532951
+April,Winter Park,21.9575
+April,Crested Butte,15.49210526
+April,Purgatory,10.685
+April,Breckenridge,19.37631579
+April,Loveland,18.82105263
+April,Aspen,17.81578947
+April,Eldora,13.18717949
+April,Snowmass,17.07272727
+April,Powderhorn,30.0175
+April,Monarch,16.85
+April,Telluride,26.18684211
+April,Steamboat,48.76153846
+April,Vail,23.185
+April,Wolf Creek,32.79375
+April,Snowbird,37.8
+April,Whistler,45.35433071
+April,Squaw,50.23684211
+May,Mt Baker,64.9125
+May,Jackson,27.23947368
+May,Revelstoke,46.32939633
+May,Winter Park,22.0325
+May,Crested Butte,11.27105263
+May,Purgatory,2.1975
+May,Breckenridge,20.57105263
+May,Loveland,16.81315789
+May,Aspen,15.22105263
+May,Eldora,8.005
+May,Snowmass,9.881818182
+May,Powderhorn,29.03846154
+May,Monarch,13.7825
+May,Telluride,24.44473684
+May,Steamboat,50.41794872
+May,Vail,22.5875
+May,Wolf Creek,32.05
+May,Snowbird,41.9
+May,Whistler,43.81929134
+May,Squaw,44.13157895
